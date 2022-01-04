@@ -32,9 +32,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query(value = "select * from posts where published_at in ?1 order by published_at asc",nativeQuery = true)
     List<Post>filterByPublishedAt(List<String> publishedAt);
 
-    @Query(value = "select Distinct name,p.author from posts p inner join users u on p.author=u.id ", nativeQuery = true)
-    List<String> findAuthor();
-
     @Query(value = "select Distinct published_at from posts", nativeQuery = true)
     List<String> findPublishedAt();
 

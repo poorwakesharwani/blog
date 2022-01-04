@@ -46,7 +46,7 @@
 
         <h3>Author Name</h3>
         <span th:each="entry : ${authors}">
-                <input type="checkbox"  name="author" th:value="${entry}" onclick="append('author',this.value)">  <label>[[${entry}]]</label><br>
+                <input type="checkbox"  name="author" th:value="${entry.id}" onclick="append('author',this.value)">  <label>[[${entry.name}]]</label><br>
             </span>
         <h3>Published Date</h3>
         <span th:each="entry : ${publishAt}">
@@ -65,15 +65,16 @@
                <h6 th:text="${entry.key.excerpt}"/><br>
                <a href="#" type="submit"  style="margin-left: 155px" class="btn btn-info col-2" th:href="@{'/post/'+${entry.key.id}}">Read More</a>
                <div sec:authorize="hasAnyAuthority('Author','Admin')">
-                 <div sec:authorize="hasAuthority('Author')">
-                     <div th:if="${authority=='Admin'}">
+                   <div sec:authorize="hasAuthority('Author')">
+                       <div th:if="${authority=='Admin'}">
                           <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
                           <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/deletepost/'+${entry.key.id}}">Delete Post</a>
-                     </div>
-                     <div th:if="${authority==3}">
+                       </div>
+                       <div th:if="${authority==3}">
                          <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
                          <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/deletepost/'+${entry.key.id}}">Delete Post</a>
-                     </div>
+                       </div>
+                   </div>
                </div>
            </div>
             <br><br>

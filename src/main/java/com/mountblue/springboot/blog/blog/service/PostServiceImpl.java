@@ -5,6 +5,7 @@ import com.mountblue.springboot.blog.blog.model.PostTag;
 import com.mountblue.springboot.blog.blog.model.Tag;
 import com.mountblue.springboot.blog.blog.model.Users;
 import com.mountblue.springboot.blog.blog.repository.PostRepository;
+import com.mountblue.springboot.blog.blog.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,8 @@ public class PostServiceImpl implements PostService {
     private TagService tagService;
     @Autowired
     private UsersService usersService;
+    @Autowired
+    private UsersRepository usersRepository;
 
     @Override
     public List<Post> findAll() {
@@ -54,7 +57,7 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
-    private Model findAllTags(Map<Post,String>postIdVsTags,Model model,List<Post>posts){
+    private Model findAllTags(Map<Post,String>postIdVsTags,Model model,List<Post>posts,Map<Post,Users>postsVsUsers){
         for (Post post : posts) {
             System.out.println("id="+post.getId());
             List<PostTag> postTags = postTagService.findByPostId(post.getId());
@@ -64,6 +67,10 @@ public class PostServiceImpl implements PostService {
             }
             postIdVsTags.put(post, tags.substring(1, tags.length()));
         }
+        for(Post post : posts){
+           postsVsUsers.put(post,post.getUser());
+        }
+        model.addAttribute("postVsUsers",postsVsUsers);
         model.addAttribute("postIdVsTags", postIdVsTags);
         model=allModelData(model);
         return model;
@@ -81,7 +88,8 @@ public class PostServiceImpl implements PostService {
         } else if(sort.equals("desc")) {
             posts = postRepository.findSearchResultDESC(keyword);
         }
-        return findAllTags(postIdVsTags,model,posts);
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
     }
 
 //    public Model display(Model model, int start, int limit) {
@@ -105,10 +113,9 @@ public class PostServiceImpl implements PostService {
 
     private Model allModelData(Model model) {
         List<String> tags = tagService.findAllTag();
-        List<String> authors = postRepository.findAuthor();
         List<String> publishAt = postRepository.findPublishedAt();
         model.addAttribute("tagName", tags);
-        model.addAttribute("authors", authors);
+        model.addAttribute("authors", usersRepository.findAll());
        // System.out.println(model.getAttribute("authors")+"author name ");
         model.addAttribute("publishAt", publishAt);
         return model;
@@ -130,7 +137,8 @@ public class PostServiceImpl implements PostService {
 //                model.addAttribute("authority","Admin");
 //            }
 //        }
-        return findAllTags(postIdVsTags,model,posts);
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
     }
 
     @Override
@@ -140,7 +148,8 @@ public class PostServiceImpl implements PostService {
         }
         List<Post>posts=postRepository.filterByPublishedAt(publishedAt);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
-        return findAllTags(postIdVsTags,model,posts);
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
     }
 
     @Override
@@ -155,7 +164,8 @@ public class PostServiceImpl implements PostService {
         List<Post>posts=postRepository.filterByAuthor(author,keyword);
         System.out.println(posts.size()+"  author list size");
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
-        return findAllTags(postIdVsTags,model,posts);
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
     }
 
     @Override
@@ -170,7 +180,8 @@ public class PostServiceImpl implements PostService {
         List<Post>posts=postRepository.filterByTag(tag,keyword);
         System.out.println(posts.size()+"  author list size");
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
-        return findAllTags(postIdVsTags,model,posts);
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
     }
 
     @Override
@@ -185,7 +196,8 @@ public class PostServiceImpl implements PostService {
         List<Post>posts=postRepository.filterByTagAndAuthor(tags,author,keyword);
         System.out.println(posts.size()+"  author list size");
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
-        return findAllTags(postIdVsTags,model,posts);
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
     }
 
 //    public Model sort(Model model, String sort) {
