@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <title>New Post/Edit Post</title>
     <meta charset="utf-8">
@@ -18,8 +18,12 @@
         <input type="tags" placeholder="Enter Tags with Comma Separated" class="form-control
  mb-4 col-4" name="tag" th:value="${tags}"/><br>
         <textarea placeholder="Content" class="form-control mb-4 col-4" rows="20" cols="80" th:field="*{content}">
-
     </textarea><br>
+        <div sec:authorize="hasAuthority('Admin')">
+            <select  name="authorName">
+                <option th:each="authorName:${authors}" th:value="${authorName.id}" th:text="${authorName.name}"/>
+            </select>
+        </div>
         <button type="submit" class="btn btn-info col-2">Submit</button>
     </form>
 </div>

@@ -3,10 +3,7 @@ package com.mountblue.springboot.blog.blog.controller;
 import com.mountblue.springboot.blog.blog.model.Comment;
 import com.mountblue.springboot.blog.blog.model.Post;
 import com.mountblue.springboot.blog.blog.model.PostTag;
-import com.mountblue.springboot.blog.blog.service.CommentService;
-import com.mountblue.springboot.blog.blog.service.PostService;
-import com.mountblue.springboot.blog.blog.service.PostTagService;
-import com.mountblue.springboot.blog.blog.service.TagService;
+import com.mountblue.springboot.blog.blog.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +21,8 @@ public class PostController {
     private CommentService commentService;
     @Autowired
     private PostTagService postTagService;
+    @Autowired
+    private UsersService usersService;
 
     @GetMapping(value = "/")
     public String allPost(Model model,
@@ -74,6 +73,7 @@ public class PostController {
     public String createPost(Model model) {
         Post post = new Post();
         model.addAttribute("post", post);
+        model=usersService.findAllUsers(model);
         return "new-post";
     }
 
@@ -119,9 +119,10 @@ public class PostController {
     }
 
     @PostMapping("/publish")
-    public String publishPost(@ModelAttribute("post") Post post, @RequestParam("tag") String tag, Model model) {
-        System.out.println("publishPost");
-        model = postService.savePost(post, tag, model);
+    public String publishPost(@ModelAttribute("post") Post post, @RequestParam("tag") String tag, Model model,
+                              @RequestParam(value = "authorName",required = false)String id) {
+        System.out.println("author id== "+id);
+        model = postService.savePost(post, tag, model,id);
         return "redirect:/";
     }
 }

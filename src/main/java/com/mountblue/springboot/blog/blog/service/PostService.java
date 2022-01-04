@@ -36,5 +36,5 @@ public interface PostService {
     Model filterByTag(Model model,List<String>tag,String sort,String keyword);
     Model filterByTagAndAuthor(Model model,List<String>tags,List<Integer>author,String sort,String keyword);
 
-    Model savePost(Post post, String tag, Model model);
+    Model savePost(Post post, String tag, Model model,String authorId);
 }

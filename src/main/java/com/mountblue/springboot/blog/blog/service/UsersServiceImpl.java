@@ -3,7 +3,11 @@ package com.mountblue.springboot.blog.blog.service;
 import com.mountblue.springboot.blog.blog.model.Users;
 import com.mountblue.springboot.blog.blog.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+
+import java.util.List;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -16,10 +20,15 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Users findByEmailAndPassword(String email, String password) {
+    public Users findByEmail(String email) {
+        return usersRepository.findByEmail(email);
+    }
 
-
-        return usersRepository.findByEmailAndPassword(email, password);
+    @Override
+    public Model findAllUsers(Model model) {
+        List<Users> users=usersRepository.findAll();
+        model.addAttribute("authors",users);
+        return model;
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.mountblue.springboot.blog.blog.model.Tag;
 import com.mountblue.springboot.blog.blog.model.Users;
 import com.mountblue.springboot.blog.blog.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import java.util.*;
@@ -107,14 +109,27 @@ public class PostServiceImpl implements PostService {
         List<String> publishAt = postRepository.findPublishedAt();
         model.addAttribute("tagName", tags);
         model.addAttribute("authors", authors);
-        System.out.println(model.getAttribute("authors")+"author name ");
+       // System.out.println(model.getAttribute("authors")+"author name ");
         model.addAttribute("publishAt", publishAt);
         return model;
     }
 
+    @Override
     public Model dashboard(Model model) {
         List<Post> posts = findAll();
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        if(auth!=null) {
+//            System.out.println("all the details");
+//            if(auth.getAuthorities().toString().equals("Author")){
+//                System.out.println("name" + auth.getName()+"  Author");
+//                Users user=usersService.findByEmail(auth.getName());
+//                model.addAttribute("authority",user.getId());
+//            }else if(auth.getAuthorities().toString().equals("Admin")){
+//                System.out.println("name" + auth.getName()+"  Admin");
+//                model.addAttribute("authority","Admin");
+//            }
+//        }
         return findAllTags(postIdVsTags,model,posts);
     }
 
@@ -185,11 +200,17 @@ public class PostServiceImpl implements PostService {
 //    }
 
     @Override
-    public Model savePost(Post post, String tag, Model model) {
+    public Model savePost(Post post, String tag, Model model,String authorId) {
         String tags[] = tag.split(",");
-        Users user= usersService.getById(1);
+        if(authorId!=null){
+            Users user= usersService.getById(Integer.parseInt(authorId));
+            post.setUser(user);
+        }else if(authorId==null){
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Users user=usersService.findByEmail(auth.getName());
+            post.setUser(user);
+        }
         post.setExcerpt(post.getContent().trim().substring(0, post.getContent().length() / 4));
-        post.setUser(user);
         post.setPublishedAt(new Date());
         post.setCreatedAt(new Date());
         post.setUpdatedAt(new Date());

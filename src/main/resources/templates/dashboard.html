@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <title>Dashboard</title>
     <meta charset="utf-8">
@@ -63,8 +64,17 @@
                <p th:text="${entry.key.publishedAt}"/>
                <h6 th:text="${entry.key.excerpt}"/><br>
                <a href="#" type="submit"  style="margin-left: 155px" class="btn btn-info col-2" th:href="@{'/post/'+${entry.key.id}}">Read More</a>
-               <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
-               <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/deletepost/'+${entry.key.id}}">Delete Post</a>
+               <div sec:authorize="hasAnyAuthority('Author','Admin')">
+                 <div sec:authorize="hasAuthority('Author')">
+                     <div th:if="${authority=='Admin'}">
+                          <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
+                          <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/deletepost/'+${entry.key.id}}">Delete Post</a>
+                     </div>
+                     <div th:if="${authority==3}">
+                         <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
+                         <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/deletepost/'+${entry.key.id}}">Delete Post</a>
+                     </div>
+               </div>
            </div>
             <br><br>
         </tr>

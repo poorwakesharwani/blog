@@ -11,10 +11,16 @@
 <body>
 <div class="container">
 <h1>Login</h1>
-<form action="#" th:action="@{/checkingcredential}"  th:object="${user}" method="POST">
-    <input type="text" placeholder="Email" th:field="*{email}" class="form-control
+    <div th:if="${param.logout}">
+        <h5 class="text-center text-success">Logout Successfully</h5>
+    </div>
+    <div th:if="${param.error}">
+        <h5 class="text-center text-success">Invalid Username And Password</h5>
+    </div>
+<form action="#" th:action="@{/checkingcredential}"  method="POST">
+    <input type="text" name="username" placeholder="Email"  class="form-control
  mb-4 col-4"/><br><br>
-    <input type="password" placeholder="Password" th:field=="*{password}" class="form-control
+    <input type="password" name="password" placeholder="Password"class="form-control
  mb-4 col-4"/>
     <button type="submit" class="btn btn-info col-2">Submit</button>
 </form>
