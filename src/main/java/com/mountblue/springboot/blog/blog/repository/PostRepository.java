@@ -4,6 +4,8 @@ import com.mountblue.springboot.blog.blog.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -29,8 +31,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "(select id from tags where name like %?3%))) order by published_at )",nativeQuery = true)
    List<Post> filterByTagAndAuthor(List<String>tags,List<Integer>author,String keyword);
 
-    @Query(value = "select * from posts where published_at in ?1 order by published_at asc",nativeQuery = true)
-    List<Post>filterByPublishedAt(List<String> publishedAt);
+    @Query(value = "select * from posts where published_at between ?1 and ?2",nativeQuery = true)
+    List<Post>filterByPublishedAt(Date startDate, Date endDate);
 
     @Query(value = "select Distinct published_at from posts", nativeQuery = true)
     List<String> findPublishedAt();

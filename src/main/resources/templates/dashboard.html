@@ -49,9 +49,10 @@
                 <input type="checkbox"  name="author" th:value="${entry.id}" onclick="append('author',this.value)">  <label>[[${entry.name}]]</label><br>
             </span>
         <h3>Published Date</h3>
-        <span th:each="entry : ${publishAt}">
-                <input type="checkbox" name="published" th:value="${entry}" onclick="append('published',this.value)">  <label>[[${entry}]]</label><br>
-            </span>
+          <span>Select Range Of Date</span>
+              <input type="date" id="startDate" name="endDate"><br><br>
+             <input type="date" id="endDate" name="endDate"><br><br>
+              <input type="submit" onclick="filterByDate()">
 </div>
 <div align="center">
     <table class="table table-striped">
@@ -59,24 +60,24 @@
         <tr th:each="entry : ${postIdVsTags}">
            <div style="width:700px;height:300px; border-style: solid;" class="box">
                <h4 th:text="${entry.key.title}"/>
-
+               <p th:text="${entry.key.user.name}"/>
                <p> Tag: <span th:inline="text">[[${entry.value}]]</span> </p>
                <p th:text="${entry.key.publishedAt}"/>
                <h6 th:text="${entry.key.excerpt}"/><br>
                <a href="#" type="submit"  style="margin-left: 155px" class="btn btn-info col-2" th:href="@{'/post/'+${entry.key.id}}">Read More</a>
                <div sec:authorize="hasAnyAuthority('Author','Admin')">
-                   <div sec:authorize="hasAuthority('Author')">
-                       <div th:if="${authority=='Admin'}">
+                   <div sec:authorize="hasAuthority('Admin')">
                           <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
                           <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/deletepost/'+${entry.key.id}}">Delete Post</a>
-                       </div>
-                       <div th:if="${authority==3}">
+                   </div>
+                   <div sec:authorize="hasAuthority('Author')">
+                       <div th:if="${entry.key.user.id==currentUser.id}">
                          <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
                          <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/deletepost/'+${entry.key.id}}">Delete Post</a>
                        </div>
                    </div>
+                   </div>
                </div>
-           </div>
             <br><br>
         </tr>
         </tbody>
@@ -108,6 +109,15 @@ function removeParam(sourceURL, key, value) {
 function sortOrder(key,value){
      let url = new URL(window.location);
       url.searchParams.set(key, value);
+        window.location.href = url;
+}
+
+function filterByDate(){
+startDate=document.getElementById("startDate").value;
+    endDate=document.getElementById("endDate").value;
+     value=startDate+","+endDate;
+     let url = new URL(window.location);
+      url.searchParams.set("date", value);
         window.location.href = url;
 }
 </script>

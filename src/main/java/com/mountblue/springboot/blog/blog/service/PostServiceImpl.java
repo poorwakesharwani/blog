@@ -11,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -126,27 +129,32 @@ public class PostServiceImpl implements PostService {
         List<Post> posts = findAll();
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        if(auth!=null) {
-//            System.out.println("all the details");
-//            if(auth.getAuthorities().toString().equals("Author")){
-//                System.out.println("name" + auth.getName()+"  Author");
-//                Users user=usersService.findByEmail(auth.getName());
-//                model.addAttribute("authority",user.getId());
-//            }else if(auth.getAuthorities().toString().equals("Admin")){
-//                System.out.println("name" + auth.getName()+"  Admin");
-//                model.addAttribute("authority","Admin");
-//            }
-//        }
+        if(auth!=null) {
+            Users currentUser=usersRepository.findByEmail(auth.getName());
+           model.addAttribute("currentUser",currentUser);
+           model.addAttribute("currentUserAuthority",auth.getAuthorities());
+        }
         Map<Post,Users>postVsUsers=new HashMap<>();
+        System.out.println("model"+model);
         return findAllTags(postIdVsTags,model,posts,postVsUsers);
     }
 
     @Override
-    public Model filterByPublishedAt(Model model, List<String> publishedAt, String sort) {
+    public Model filterByPublishedAt(Model model, String startDate,String endDate, String sort)  {
         if(sort=="null"){
             sort="asc";
         }
-        List<Post>posts=postRepository.filterByPublishedAt(publishedAt);
+        SimpleDateFormat formatter2=new SimpleDateFormat("yyyy-MM-dd");
+        Date start=null;
+        Date end=null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        List<Post>posts=postRepository.filterByPublishedAt(start,end);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
         Map<Post,Users>postVsUsers=new HashMap<>();
         return findAllTags(postIdVsTags,model,posts,postVsUsers);

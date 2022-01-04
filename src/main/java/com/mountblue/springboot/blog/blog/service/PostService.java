@@ -31,7 +31,7 @@ public interface PostService {
 
     Model dashboard(Model model);
 
-     Model filterByPublishedAt(Model model, List<String> publishedAt, String sort);
+     Model filterByPublishedAt(Model model,String startDate,String endDate, String sort);
     Model filterByAuthor(Model model,List<Integer>author,String sort,String keyword);
     Model filterByTag(Model model,List<String>tag,String sort,String keyword);
     Model filterByTagAndAuthor(Model model,List<String>tags,List<Integer>author,String sort,String keyword);

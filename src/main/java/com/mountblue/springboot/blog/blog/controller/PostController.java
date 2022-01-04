@@ -32,10 +32,18 @@ public class PostController {
                           @RequestParam(value = "sort", required = false) String sort,
                           @RequestParam(value = "tag", required = false) List<String> tags,
                           @RequestParam(value = "author", required = false) List<Integer> author,
-                          @RequestParam(value = "published", required = false) List<String> published
+                          @RequestParam(value = "date", required = false) String published
     ) {
-        System.out.println("yes");
-        System.out.println("published=="+published);
+        String startDate="";
+        String endDate="";
+        if(published!=null) {
+            System.out.println("published=="+published);
+            String date[] = published.split(",");
+            System.out.println(date[0] + " " + date[1]);
+            startDate=date[0];
+            endDate=date[1];
+        }
+       //
         if(tags!=null && author!=null && published!=null){
               // model=postService.filterByAll(model,tag,author,published,sort);
                return "dashboard";
@@ -55,7 +63,7 @@ public class PostController {
            model=postService.filterByAuthor(model,author,sort,keyword);
             return "dashboard";
         }else if(published!=null) {
-           model=postService.filterByPublishedAt(model,published,sort);
+           model=postService.filterByPublishedAt(model,startDate,endDate,sort);
             return "dashboard";
         }else if(keyword!=null){
                 model=postService.search(model,keyword,sort);
