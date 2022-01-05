@@ -8,6 +8,7 @@ import java.util.List;
 public interface UsersService {
 
     Users findByEmail(String email);
+
     Model findAllUsers(Model model);
 
     void save(Users user);

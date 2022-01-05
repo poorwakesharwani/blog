@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <title>Dashboard</title>
     <meta charset="utf-8">
@@ -10,19 +11,28 @@
 </head>
 <body>
 <br><br>
+<div align="center">
+    <a   class="btn btn-info col-2" th:href="@{/}" align="right">Home</a>
+</div>
+<div align="right">
 
-            <div style="width:700px;height:300px; border-style: solid;margin-left: 475px;" align="center" class="box" th:object="${post}">
+     <span sec:authorize="isAnonymous()">
+            <a   class="btn btn-info col-2" th:href="@{/login}" align="right">Login</a>
+    </span>
+    <span sec:authorize="isAuthenticated()">
+            <a   class="btn btn-info col-2" th:href="@{/logout}" align="right">Logout</a>
+    </span>
+</div>
+<div align="center">
+            <div style="width:1000px;height:300px; border-style: solid;"  class="box" th:object="${post}">
                 <h4 th:text="${post.title}"/>
-<!--
-                <span th:text="${post.author}"/>
--->
+                <span th:text="${post.user.name}"/>
                 <p>Tag: <span>[[${tags}]]</span></p>
                 <p th:text="${post.publishedAt}"/><br>
                 <h6 th:text="${post.content}"/><br><br><br>
-
             </div>
             <br><br>
- <div class ="box"style="width:634px; margin-left: 475px;">
+ <div class ="box"style="width:634px;">
    <h4>Comment</h4>
     <div>
     <form action="#" th:action="@{/comment/savecomment}"  th:object="${comment}" method="POST">
@@ -32,22 +42,33 @@
         <input type="text" placeholder="Email" th:field="*{email}" class="form-control mb-4 col-4"/><br><br>
         <input type="text" placeholder="Write Comment" th:field="*{commentData}" class="form-control mb-4 col-4"/><br><br>
         <input type="hidden"  name="postId" th:value="${post.id}" />
-        <button type="submit" class="btn btn-info col-2" style="margin-left:273px">Comment</button>
+        <button type="submit" class="btn btn-info col-2">Comment</button>
     </form>
 </div>
  </div><br><br>
 <div>
     <tr th:each="comment : ${comments}">
-        <div style="width:700px;height:300px; margin-left: 468px;border-style: solid;" align="center" class="box">
+        <div style="width:1000px;height:300px; border-style: solid;" align="center" class="box">
             <h4 th:text="${comment.name}"/>
             <span th:text="${comment.email}"/>
             <p th:text="${comment.createdAt}"/><br>
             <h6 th:text="${comment.commentData}"/><br><br><br>
-            <a href="#" type="submit"  style=" margin-left: 164px" class="btn btn-info col-3" th:href="@{'/comment/updatecomment/'+${comment.id}}">Update Comment</a>
-            <a href="#" type="submit"  style=" margin-left: 24px" class="btn btn-info col-3" th:href="@{'/comment/deletecomment/'+${comment.id}}">Delete Comment</a>
+            <div sec:authorize="hasAnyAuthority('Author','Admin')">
+                <div sec:authorize="hasAuthority('Admin')">
+                    <a href="#" type="submit"  style=" margin-left: 164px" class="btn btn-info col-3" th:href="@{'/comment/updatecomment/'+${comment.id}}">Update Comment</a>
+                    <a href="#" type="submit"  style=" margin-left: 24px" class="btn btn-info col-3" th:href="@{'/comment/deletecomment/'+${comment.id}}">Delete Comment</a>
+                </div>
+                <div sec:authorize="hasAuthority('Author')">
+
+                        <a href="#" type="submit"  style=" margin-left: 164px" class="btn btn-info col-3" th:href="@{'/comment/updatecomment/'+${comment.id}}">Update Comment</a>
+                        <a href="#" type="submit"  style=" margin-left: 24px" class="btn btn-info col-3" th:href="@{'/comment/deletecomment/'+${comment.id}}">Delete Comment</a>
+
+                </div>
         </div>
         <br><br>
+        </div>
     </tr>
+</div>
 </div>
 </body>
 </html>

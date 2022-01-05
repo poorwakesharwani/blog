@@ -3,12 +3,17 @@ package com.mountblue.springboot.blog.blog.controller;
 import com.mountblue.springboot.blog.blog.model.Comment;
 import com.mountblue.springboot.blog.blog.model.Post;
 import com.mountblue.springboot.blog.blog.model.PostTag;
+import com.mountblue.springboot.blog.blog.model.Users;
+import com.mountblue.springboot.blog.blog.repository.UsersRepository;
 import com.mountblue.springboot.blog.blog.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.*;
 
 @Controller
@@ -24,6 +29,8 @@ public class PostController {
     private PostTagService postTagService;
     @Autowired
     private UsersService usersService;
+    @Autowired
+    private UsersRepository usersRepository;
 
     @GetMapping(value = "/")
     public String allPost(Model model,
@@ -36,61 +43,67 @@ public class PostController {
                           @RequestParam(value = "date", required = false) String published
     ) {
         System.out.println("yes");
-        if(sort==null){
-            sort="asc";
+        if (sort == null) {
+            sort = "asc";
         }
-        Pageable pageable=postService.getPage(start,limit,sort);
-        String startDate="";
-        String endDate="";
-        if(published!=null) {
+        Pageable pageable = postService.getPage(start, limit, sort);
+        String startDate = "";
+        String endDate = "";
+        if (published != null) {
             System.out.println("published==" + published);
             String date[] = published.split(",");
             System.out.println(date[0] + " " + date[1]);
             startDate = date[0];
             endDate = date[1];
         }
-        if(tags!=null && author!=null && published!=null){
-               model=postService.filterByAll(model,tags,author,startDate,endDate,sort,keyword);
-               return "dashboard";
-        }else if(tags!=null && author!=null){
-           model=postService.filterByTagAndAuthor(model,tags,author,sort,keyword);
+        if (tags != null && author != null && published != null) {
+            model = postService.filterByAll(model, tags, author, startDate, endDate, sort, keyword, pageable);
             return "dashboard";
-        }else if(tags!=null && published!=null){
-           model=postService.filterByTagAndPublished(model,tags,startDate,endDate,sort,keyword);
+        } else if (tags != null && author != null) {
+            model = postService.filterByTagAndAuthor(model, tags, author, sort, keyword, pageable);
             return "dashboard";
-        }else if(author!=null && published!=null){
+        } else if (tags != null && published != null) {
+            model = postService.filterByTagAndPublished(model, tags, startDate, endDate, sort, keyword, pageable);
+            return "dashboard";
+        } else if (author != null && published != null) {
             System.out.println("author and published");
-            model=postService.filterByAuthorAndPublished(model,author,startDate,endDate,sort,keyword);
+            model = postService.filterByAuthorAndPublished(model, author, startDate, endDate, sort, keyword, pageable);
             return "dashboard";
-        }else if(tags!=null) {
-            model=postService.filterByTag(model,tags,sort,keyword);
+        } else if (tags != null) {
+            model = postService.filterByTag(model, tags, sort, keyword, pageable);
             return "dashboard";
-        }else if(author!=null) {
-           model=postService.filterByAuthor(model,author,sort,keyword);
+        } else if (author != null) {
+            model = postService.filterByAuthor(model, author, sort, keyword, pageable);
             return "dashboard";
-        }else if(published!=null) {
-            model=postService.filterByPublishedAt(model,startDate,endDate,sort);
+        } else if (published != null) {
+            model = postService.filterByPublishedAt(model, startDate, endDate, sort, pageable);
             return "dashboard";
-        }else if(keyword!=null){
-                model=postService.search(model,keyword,sort,pageable);
-                return "dashboard";
-        }else{
+        } else if (keyword != null) {
+            model = postService.search(model, keyword, sort, pageable);
+            return "dashboard";
+        } else {
             System.out.println("dashboard");
-        model = postService.dashboard(model,pageable);
-        return "dashboard";
-    }
+            model = postService.dashboard(model, pageable);
+            return "dashboard";
+        }
     }
 
     @GetMapping("/newpost")
     public String createPost(Model model) {
         Post post = new Post();
         model.addAttribute("post", post);
-        model=usersService.findAllUsers(model);
+        model = usersService.findAllUsers(model);
         return "new-post";
     }
 
     @GetMapping("/post/{id}")
     public String readMore(@PathVariable(name = "id") int id, Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getName()+"name=======");
+        if (auth != null) {
+            Users currentUser = usersRepository.findByEmail(auth.getName());
+            model.addAttribute("currentUser", currentUser);
+        }
         Post post = postService.getById(id);
         Comment comment = new Comment();
         List<Comment> comments = commentService.findByPostId(id);
@@ -132,9 +145,9 @@ public class PostController {
 
     @PostMapping("/publish")
     public String publishPost(@ModelAttribute("post") Post post, @RequestParam("tag") String tag, Model model,
-                              @RequestParam(value = "authorName",required = false)String id) {
-        System.out.println("author id== "+id);
-        model = postService.savePost(post, tag, model,id);
+                              @RequestParam(value = "authorName", required = false) String id) {
+        System.out.println("author id== " + id);
+        model = postService.savePost(post, tag, model, id);
         return "redirect:/";
     }
 }

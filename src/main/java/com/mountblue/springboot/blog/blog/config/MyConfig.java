@@ -16,16 +16,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class MyConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
-    public UserDetailsService getUserDetailsService(){
-        return  new CustomUserDetailService();
+    public UserDetailsService getUserDetailsService() {
+        return new CustomUserDetailService();
     }
 
     @Bean
-    public BCryptPasswordEncoder getPassword(){
+    public BCryptPasswordEncoder getPassword() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
         System.out.println("Dao Authentication provider");
         DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
         System.out.println(dao);
@@ -36,14 +37,14 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-       auth.authenticationProvider(daoAuthenticationProvider());
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-       http.authorizeRequests().antMatchers("/newpost/**").hasAnyAuthority("Author","Admin")
-               .and().formLogin().loginPage("/login")
-               .loginProcessingUrl("/checkingcredential").permitAll().and().logout().permitAll()
-               .and().csrf().disable();
+        http.authorizeRequests().antMatchers("/newpost/**").hasAnyAuthority("Author", "Admin")
+                .and().formLogin().loginPage("/login")
+                .loginProcessingUrl("/checkingcredential").permitAll().and().logout().permitAll()
+                .and().csrf().disable();
     }
 }

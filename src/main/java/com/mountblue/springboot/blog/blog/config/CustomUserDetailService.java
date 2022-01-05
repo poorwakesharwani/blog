@@ -11,17 +11,18 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
     private UsersRepository usersRepository;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("email is "+email);
-        try{
-               Users user = usersRepository.findByEmail(email);
-               if(user==null){
-                   throw new UsernameNotFoundException("No Author");
-               }else{
-                   return  new CustomUserDetail(user);
-               }
-        }catch (Exception e){
+        System.out.println("email is " + email);
+        try {
+            Users user = usersRepository.findByEmail(email);
+            if (user == null) {
+                throw new UsernameNotFoundException("No Author");
+            } else {
+                return new CustomUserDetail(user);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

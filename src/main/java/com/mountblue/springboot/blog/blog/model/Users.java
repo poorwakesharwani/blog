@@ -17,7 +17,7 @@ public class Users {
     private String name;
     @Column(name = "password")
     private String password;
-    @Column(name="role")
+    @Column(name = "role")
     private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -40,6 +40,7 @@ public class Users {
     public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
+
     public int getId() {
         return id;
     }

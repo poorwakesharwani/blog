@@ -13,6 +13,12 @@
 <br><br>
 <div class="container">
         <a   class="btn btn-info col-2" href="/newpost">Add Post</a>
+    <span sec:authorize="isAnonymous()">
+            <a   class="btn btn-info col-2" th:href="@{/login}" align="right">Login</a>
+    </span>
+    <span sec:authorize="isAuthenticated()">
+            <a   class="btn btn-info col-2" th:href="@{/logout}" align="right">Logout</a>
+    </span>
     <br>
 
 </div><br><br>
@@ -38,13 +44,13 @@
 
                <h3>Tag Name</h3>
                    <div th:each="entry : ${tagName}" th:inline="text" >
-                       <input type="checkbox" id="a" name="tag" th:value="${entry}" onclick="append('tag',this.value)">  <label>[[${entry}]]
+                       <input type="checkbox" id="a" name="tag" th:value="${entry}" onclick="appendParam('tag',this.value)">  <label>[[${entry}]]
              </label><br>
             </div>
 
         <h3>Author Name</h3>
         <span th:each="entry : ${authors}">
-                <input type="checkbox"  name="author" th:value="${entry.id}" onclick="append('author',this.value)">  <label>[[${entry.name}]]</label><br>
+                <input type="checkbox"  name="author" th:value="${entry.id}" onclick="appendParam('author',this.value)">  <label>[[${entry.name}]]</label><br>
             </span>
         <h3>Published Date</h3>
           <span>Select Range Of Date</span>
@@ -56,13 +62,13 @@
     <table class="table table-striped">
         <tbody>
         <tr th:each="entry : ${postIdVsTags}">
-           <div style="width:700px;height:300px; border-style: solid;" class="box">
+           <div style="width:1000px;height:400px; border-style: solid;" class="box">
                <h4 th:text="${entry.key.title}"/>
                <p th:text="${entry.key.user.name}"/>
                <p> Tag: <span th:inline="text">[[${entry.value}]]</span> </p>
                <p th:text="${entry.key.publishedAt}"/>
                <h6 th:text="${entry.key.excerpt}"/><br>
-               <a href="#" type="submit"  style="margin-left: 155px" class="btn btn-info col-2" th:href="@{'/post/'+${entry.key.id}}">Read More</a>
+               <a href="#" type="submit"  class="btn btn-info col-2" th:href="@{'/post/'+${entry.key.id}}">Read More</a><br><br>
                <div sec:authorize="hasAnyAuthority('Author','Admin')">
                    <div sec:authorize="hasAuthority('Admin')">
                           <a href="#" type="submit"  style="margin-left: 24px" class="btn btn-info col-2" th:href="@{'/updatepost/'+${entry.key.id}}">Update Post</a>
@@ -85,41 +91,7 @@
     <a href="/?start=11&limit=10">2</a>
     <a href="/?start=21&limit=10">3</a>
 </div>
-<script>
-    function append(key, value){
-       let url = new URL(window.location);
-	let queryString = window.location.href;
-	if(queryString.indexOf(key+'='+value) > 0) {
-	   let params = removeParam(url.search, key, value);
-    	window.location.href = url.origin + par ams;
-	} else {
-	    url.searchParams.append(key, value);
-        window.location.href = url;
-	}
-    }
-function removeParam(sourceURL, key, value) {
-	var params = sourceURL.replace("?", "").split("&");
-	let removeParam = key + "=" + value;
-	params = params.filter((param) => param !== removeParam);
-	return "/?" + params.join("&");
-}
-
-function sortOrder(key,value){
-     let url = new URL(window.location);
-      url.searchParams.set(key, value);
-        window.location.href = url;
-}
-
-function filterByDate(){
-    startDate=document.getElementById("startDate").value;
-    endDate=document.getElementById("endDate").value;
-     value=startDate+","+endDate;
-     alert(value);
-     let url = new URL(window.location);
-     url.searchParams.append("date", value);
-     window.location.href = url;
-}
-</script>
+<script th:src="@{/index.js}"></script>
 </body>
 
 </html>

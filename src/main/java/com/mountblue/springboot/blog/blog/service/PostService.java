@@ -26,23 +26,28 @@ public interface PostService {
 
     Post findById(int id);
 
-    Model search(Model model, String search,String sort,Pageable pageable);
+    Model search(Model model, String search, String sort, Pageable pageable);
 
-    //Model display(Model model, int start, int limit);
+    Model dashboard(Model model, Pageable pageable);
 
-    Model dashboard(Model model,Pageable pageable);
+    Model filterByPublishedAt(Model model, String startDate, String endDate, String sort, Pageable pageable);
 
-     Model filterByPublishedAt(Model model,String startDate,String endDate, String sort);
-    Model filterByAuthor(Model model,List<Integer>author,String sort,String keyword);
-    Model filterByTag(Model model,List<String>tag,String sort,String keyword);
-    Model filterByTagAndAuthor(Model model,List<String>tags,List<Integer>author,String sort,String keyword);
-    Model filterByAuthorAndPublished(Model model,List<Integer>author,String startDate,String endDate,String sort,
-                                     String keyword);
-    Model filterByTagAndPublished(Model model,List<String>tags,String startDate,String endDate,
-                                  String sort,String keyword);
-    Model filterByAll(Model model,List<String>tags,List<Integer>author,String startDate,String endDate,
-                      String sort,String keyword);
+    Model filterByAuthor(Model model, List<Integer> author, String sort, String keyword, Pageable pageable);
 
-    Model savePost(Post post, String tag, Model model,String authorId);
+    Model filterByTag(Model model, List<String> tag, String sort, String keyword, Pageable pageable);
+
+    Model filterByTagAndAuthor(Model model, List<String> tags, List<Integer> author, String sort, String keyword, Pageable pageable);
+
+    Model filterByAuthorAndPublished(Model model, List<Integer> author, String startDate, String endDate, String sort,
+                                     String keyword, Pageable pageable);
+
+    Model filterByTagAndPublished(Model model, List<String> tags, String startDate, String endDate,
+                                  String sort, String keyword, Pageable pageable);
+
+    Model filterByAll(Model model, List<String> tags, List<Integer> author, String startDate, String endDate,
+                      String sort, String keyword, Pageable pageable);
+
+    Model savePost(Post post, String tag, Model model, String authorId);
+
     Pageable getPage(int start, int limit, String sort);
 }

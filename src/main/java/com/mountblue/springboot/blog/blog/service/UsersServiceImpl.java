@@ -26,8 +26,8 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public Model findAllUsers(Model model) {
-        List<Users> users=usersRepository.findAll();
-        model.addAttribute("authors",users);
+        List<Users> users = usersRepository.findAll();
+        model.addAttribute("authors", users);
         return model;
     }
 
