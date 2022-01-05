@@ -14,9 +14,7 @@
 <div class="container">
         <a   class="btn btn-info col-2" href="/newpost">Add Post</a>
     <br>
-    <div class="row">
-        <p> Total <span th:inline="text">[[${postIdVsTags.size()}]]</span> Posts</p>
-    </div>
+
 </div><br><br>
 <div class="container">
     <div class="row">
@@ -92,8 +90,8 @@
        let url = new URL(window.location);
 	let queryString = window.location.href;
 	if(queryString.indexOf(key+'='+value) > 0) {
-	    let params = removeParam(url.search, key, value);
-    	window.location.href = url.origin + params;
+	   let params = removeParam(url.search, key, value);
+    	window.location.href = url.origin + par ams;
 	} else {
 	    url.searchParams.append(key, value);
         window.location.href = url;
@@ -113,12 +111,13 @@ function sortOrder(key,value){
 }
 
 function filterByDate(){
-startDate=document.getElementById("startDate").value;
+    startDate=document.getElementById("startDate").value;
     endDate=document.getElementById("endDate").value;
      value=startDate+","+endDate;
+     alert(value);
      let url = new URL(window.location);
-      url.searchParams.set("date", value);
-        window.location.href = url;
+     url.searchParams.append("date", value);
+     window.location.href = url;
 }
 </script>
 </body>

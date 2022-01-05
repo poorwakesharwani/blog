@@ -7,12 +7,14 @@ import com.mountblue.springboot.blog.blog.model.Users;
 import com.mountblue.springboot.blog.blog.repository.PostRepository;
 import com.mountblue.springboot.blog.blog.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -79,20 +81,25 @@ public class PostServiceImpl implements PostService {
         return model;
     }
 
-    public Model search(Model model, String keyword, String sort) {
+    public Model search(Model model, String keyword, String sort,Pageable pageable) {
         System.out.println("search and sorting service "+keyword+" sort  "+sort);
-        if(sort==null){
-            sort="asc";
-        }
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
-        List<Post> posts=null;
-        if(sort.equals("asc")) {
-            posts = postRepository.findSearchResultASC(keyword);
-        } else if(sort.equals("desc")) {
-            posts = postRepository.findSearchResultDESC(keyword);
+        Page<Post> posts = postRepository.findSearchResultDESC(keyword,pageable);
+        System.out.println(posts+"all the posts");
+        for (Post post : posts) {
+            System.out.println("id="+post.getId());
+            List<PostTag> postTags = postTagService.findByPostId(post.getId());
+            String tags = "";
+            for (PostTag postTag : postTags) {
+                tags = tags + "," + tagService.findById(postTag.getTagId()).getName();
+            }
+            postIdVsTags.put(post, tags.substring(1, tags.length()));
         }
-        Map<Post,Users>postVsUsers=new HashMap<>();
-        return findAllTags(postIdVsTags,model,posts,postVsUsers);
+
+        model.addAttribute("postIdVsTags", postIdVsTags);
+        model=allModelData(model);
+
+        return model;
     }
 
 //    public Model display(Model model, int start, int limit) {
@@ -125,8 +132,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Model dashboard(Model model) {
-        List<Post> posts = findAll();
+    public Model dashboard(Model model,Pageable pageable) {
+        System.out.println("PostServiceImpl.dashboard start");
+        Page<Post> posts = postRepository.findAll(pageable);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth!=null) {
@@ -134,9 +142,21 @@ public class PostServiceImpl implements PostService {
            model.addAttribute("currentUser",currentUser);
            model.addAttribute("currentUserAuthority",auth.getAuthorities());
         }
-        Map<Post,Users>postVsUsers=new HashMap<>();
-        System.out.println("model"+model);
-        return findAllTags(postIdVsTags,model,posts,postVsUsers);
+        for (Post post : posts) {
+            System.out.println("id="+post.getId());
+            List<PostTag> postTags = postTagService.findByPostId(post.getId());
+            String tags = "";
+            for (PostTag postTag : postTags) {
+                tags = tags + "," + tagService.findById(postTag.getTagId()).getName();
+            }
+            postIdVsTags.put(post, tags.substring(1, tags.length()));
+        }
+
+        model.addAttribute("postIdVsTags", postIdVsTags);
+        model=allModelData(model);
+        System.out.println(model+"model data");
+        System.out.println("PostServiceImpl.dashboard end");
+        return model;
     }
 
     @Override
@@ -153,7 +173,6 @@ public class PostServiceImpl implements PostService {
         }catch (Exception e){
             e.printStackTrace();
         }
-
         List<Post>posts=postRepository.filterByPublishedAt(start,end);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
         Map<Post,Users>postVsUsers=new HashMap<>();
@@ -203,6 +222,80 @@ public class PostServiceImpl implements PostService {
         }
         List<Post>posts=postRepository.filterByTagAndAuthor(tags,author,keyword);
         System.out.println(posts.size()+"  author list size");
+        Map<Post, String> postIdVsTags = new LinkedHashMap<>();
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
+    }
+
+    @Override
+    public Model filterByAuthorAndPublished(Model model, List<Integer> author, String startDate, String endDate,
+                                            String sort,String keyword) {
+        if(sort=="null"){
+            sort="asc";
+        }
+        System.out.println("filter by author");
+        if(keyword==null){
+            keyword="";
+        }
+        SimpleDateFormat formatter2=new SimpleDateFormat("yyyy-MM-dd");
+        Date start=null;
+        Date end=null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        List<Post>posts=postRepository.filterByAuthorAndPublished(start,end,author,keyword);
+        Map<Post, String> postIdVsTags = new LinkedHashMap<>();
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
+    }
+
+    @Override
+    public Model filterByTagAndPublished(Model model, List<String> tags, String startDate, String endDate, String sort, String keyword) {
+        if(sort=="null"){
+            sort="asc";
+        }
+        System.out.println("filter by author");
+        if(keyword==null){
+            keyword="";
+        }
+        SimpleDateFormat formatter2=new SimpleDateFormat("yyyy-MM-dd");
+        Date start=null;
+        Date end=null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        List<Post>posts=postRepository.filterByTagAndPublished(start,end,tags,keyword);
+        Map<Post, String> postIdVsTags = new LinkedHashMap<>();
+        Map<Post,Users>postVsUsers=new HashMap<>();
+        return findAllTags(postIdVsTags,model,posts,postVsUsers);
+    }
+
+    @Override
+    public Model filterByAll(Model model, List<String> tags, List<Integer> author, String startDate, String endDate,
+                             String sort, String keyword) {
+        if(sort=="null"){
+            sort="asc";
+        }
+        System.out.println("filter by author");
+        if(keyword==null){
+            keyword="";
+        }
+        SimpleDateFormat formatter2=new SimpleDateFormat("yyyy-MM-dd");
+        Date start=null;
+        Date end=null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        List<Post>posts=postRepository.filterByTagsAndAuthorAndPublished(start,end,tags,author,keyword);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
         Map<Post,Users>postVsUsers=new HashMap<>();
         return findAllTags(postIdVsTags,model,posts,postVsUsers);
@@ -260,5 +353,15 @@ public class PostServiceImpl implements PostService {
         List<Post> posts = findAll();
         model.addAttribute("posts", posts);
         return model;
+    }
+
+    @Override
+    public Pageable getPage(int start, int limit, String sort) {
+        if (sort.equals("asc")) {
+            return PageRequest.of(start / limit, limit, Sort.by("posts.published_at").ascending());
+        } else if (sort.equals("desc")) {
+            return PageRequest.of(start / limit, limit, Sort.by("posts.published_at").ascending());
+        }
+        return null;
     }
 }

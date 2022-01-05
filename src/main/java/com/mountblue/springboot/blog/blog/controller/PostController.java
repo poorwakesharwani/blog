@@ -5,6 +5,7 @@ import com.mountblue.springboot.blog.blog.model.Post;
 import com.mountblue.springboot.blog.blog.model.PostTag;
 import com.mountblue.springboot.blog.blog.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,27 +35,32 @@ public class PostController {
                           @RequestParam(value = "author", required = false) List<Integer> author,
                           @RequestParam(value = "date", required = false) String published
     ) {
+        System.out.println("yes");
+        if(sort==null){
+            sort="asc";
+        }
+        Pageable pageable=postService.getPage(start,limit,sort);
         String startDate="";
         String endDate="";
         if(published!=null) {
-            System.out.println("published=="+published);
+            System.out.println("published==" + published);
             String date[] = published.split(",");
             System.out.println(date[0] + " " + date[1]);
-            startDate=date[0];
-            endDate=date[1];
+            startDate = date[0];
+            endDate = date[1];
         }
-       //
         if(tags!=null && author!=null && published!=null){
-              // model=postService.filterByAll(model,tag,author,published,sort);
+               model=postService.filterByAll(model,tags,author,startDate,endDate,sort,keyword);
                return "dashboard";
         }else if(tags!=null && author!=null){
            model=postService.filterByTagAndAuthor(model,tags,author,sort,keyword);
             return "dashboard";
         }else if(tags!=null && published!=null){
-           // model=postService.filterByTagAndPublished(model,tags,author,sort,keyword);
+           model=postService.filterByTagAndPublished(model,tags,startDate,endDate,sort,keyword);
             return "dashboard";
         }else if(author!=null && published!=null){
-            //model=postService.filterByAuthorAndPublished(model,tag,author,published,sort);
+            System.out.println("author and published");
+            model=postService.filterByAuthorAndPublished(model,author,startDate,endDate,sort,keyword);
             return "dashboard";
         }else if(tags!=null) {
             model=postService.filterByTag(model,tags,sort,keyword);
@@ -63,16 +69,14 @@ public class PostController {
            model=postService.filterByAuthor(model,author,sort,keyword);
             return "dashboard";
         }else if(published!=null) {
-           model=postService.filterByPublishedAt(model,startDate,endDate,sort);
+            model=postService.filterByPublishedAt(model,startDate,endDate,sort);
             return "dashboard";
         }else if(keyword!=null){
-                model=postService.search(model,keyword,sort);
+                model=postService.search(model,keyword,sort,pageable);
                 return "dashboard";
-        }if(sort!=null){
-           // model=postService.sort(model,sort);
-            return "dashboard";
         }else{
-        model = postService.dashboard(model);
+            System.out.println("dashboard");
+        model = postService.dashboard(model,pageable);
         return "dashboard";
     }
     }
