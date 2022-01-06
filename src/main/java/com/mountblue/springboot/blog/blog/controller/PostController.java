@@ -42,7 +42,6 @@ public class PostController {
                           @RequestParam(value = "author", required = false) List<Integer> author,
                           @RequestParam(value = "date", required = false) String published
     ) {
-        System.out.println("yes");
         if (sort == null) {
             sort = "asc";
         }
