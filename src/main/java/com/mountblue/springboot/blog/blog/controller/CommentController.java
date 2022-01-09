@@ -28,7 +28,7 @@ public class CommentController {
         comment.setPost(post);
         comment.setCreatedAt(new Date());
         comment.setCreatedAt(new Date());
-        commentService.save(comment);
+        comment=commentService.save(comment);
         return "redirect:/post/" + postId;
     }
 

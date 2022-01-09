@@ -13,7 +13,6 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
-   //List<Post> findByOrderByPublishedAtAsc(String publishedAt);
 @Query(value = "select * from posts",nativeQuery = true)
     Page<Post>findAll(Pageable pageable);
 
