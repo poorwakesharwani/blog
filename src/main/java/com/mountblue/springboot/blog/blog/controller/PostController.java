@@ -81,7 +81,6 @@ public class PostController {
             model = postService.search(model, keyword, sort, pageable);
             return "dashboard";
         } else {
-            System.out.println("dashboard");
             model = postService.dashboard(model, pageable);
             return "dashboard";
         }

@@ -3,7 +3,6 @@ package com.mountblue.springboot.blog.blog.api.rest.controller;
 import com.mountblue.springboot.blog.blog.api.rest.dto.CommentDTO;
 import com.mountblue.springboot.blog.blog.api.rest.service.CommentDTOService;
 import com.mountblue.springboot.blog.blog.model.Comment;
-import com.mountblue.springboot.blog.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

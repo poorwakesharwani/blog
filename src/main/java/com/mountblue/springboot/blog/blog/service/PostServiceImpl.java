@@ -109,9 +109,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Model filterByPublishedAt(Model model, String startDate, String endDate, String sort, Pageable pageable) {
-        if (sort == "null") {
-            sort = "asc";
-        }
         SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
         Date end = null;
@@ -128,9 +125,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Model filterByAuthor(Model model, List<Integer> author, String sort, String keyword, Pageable pageable) {
-        if (sort == "null") {
-            sort = "asc";
-        }
         System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
@@ -143,9 +137,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByTag(Model model, List<String> tag, String sort, String keyword
             , Pageable pageable) {
-        if (sort == "null") {
-            sort = "asc";
-        }
         System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
@@ -158,9 +149,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByTagAndAuthor(Model model, List<String> tags, List<Integer> author, String sort,
                                       String keyword, Pageable pageable) {
-        if (sort == "null") {
-            sort = "asc";
-        }
+
         System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
@@ -173,9 +162,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByAuthorAndPublished(Model model, List<Integer> author, String startDate, String endDate,
                                             String sort, String keyword, Pageable pageable) {
-        if (sort == "null") {
-            sort = "asc";
-        }
         System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
@@ -197,10 +183,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByTagAndPublished(Model model, List<String> tags, String startDate, String endDate, String sort,
                                          String keyword, Pageable pageable) {
-        if (sort == "null") {
-            sort = "asc";
-        }
-        System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
         }
@@ -221,7 +203,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByAll(Model model, List<String> tags, List<Integer> author, String startDate, String endDate,
                              String sort, String keyword, Pageable pageable) {
-        System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
         }

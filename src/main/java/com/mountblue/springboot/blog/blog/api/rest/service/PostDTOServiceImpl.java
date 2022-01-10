@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -130,5 +131,108 @@ public class PostDTOServiceImpl implements PostDTOService{
         }
         postService.deletedById(id);
         return "Deleted employee id - "+id;
+    }
+
+    @Override
+    public Page findByKeyword(String keyword,Pageable pageable) {
+        return postDTORepository.findByKeyword(keyword,pageable);
+    }
+
+    @Override
+    public Page findByAuthor(List<Integer> author, Pageable pageable,String keyword) {
+        if(keyword==null){
+            keyword="";
+        }
+        return postDTORepository.filterByAuthor(author,keyword,pageable);
+    }
+
+    @Override
+    public Page findByPublishedAt(String startDate , String endDate,String keyword, Pageable pageable) {
+        if(keyword==null){
+            keyword="";
+        }
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        if(keyword==null){
+            keyword="";
+        }
+        Date start = null;
+        Date end = null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return postDTORepository.filterByPublishedAt(start,end,keyword,pageable);
+    }
+
+    @Override
+    public Page findByTag(List<String> tag, Pageable pageable,String keyword) {
+        if(keyword==null){
+            keyword="";
+        }
+        return postDTORepository.filterByTag(tag,keyword,pageable);
+    }
+
+    @Override
+    public Page findByTagAndAuthor(List<String> tag, List<Integer> author, Pageable pageable,String keyword) {
+        if(keyword==null){
+            keyword="";
+        }
+        return postDTORepository.filterByTagAndAuthor(tag,author,keyword,pageable);
+    }
+
+    @Override
+    public Page findByTagAndPublishedAt(List<String> tag, String startDate, String endDate, Pageable pageable,
+                                        String keyword) {
+        if(keyword==null){
+            keyword="";
+        }
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = null;
+        Date end = null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return postDTORepository.filterByTagAndPublished(tag,start,end,keyword,pageable);
+    }
+
+    @Override
+    public Page findByAuthorAndPublishedAt(List<Integer> author, String startDate, String endDate, Pageable pageable,
+                                           String keyword) {
+        if(keyword==null){
+            keyword="";
+        }
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = null;
+        Date end = null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return postDTORepository.filterByAuthorAndPublished(author,start,end,keyword,pageable);
+    }
+
+    @Override
+    public Page findByTagAndAuthorAndPublishedAt(List<Integer> author, List<String> tag, String startDate,
+                                                 String endDate, Pageable pageable,String keyword) {
+        if(keyword==null){
+            keyword="";
+        }
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = null;
+        Date end = null;
+        try {
+            start = formatter2.parse(startDate);
+            end = formatter2.parse(endDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return postDTORepository.filterByTagAndAuthorAndPublished(tag,author,start,end,keyword,pageable);
     }
 }

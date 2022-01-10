@@ -17,7 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Page<Post>findAll(Pageable pageable);
 
     @Query(value = "select * from posts where author in ?1 and id in (select  id from posts where (title like %?2% or content like %?2%  or  id IN " +
-            " (select post_id from post_tags where tag_id IN (select id from tags where name like %?2%))) order by published_at )",nativeQuery = true)
+            " (select post_id from post_tags where tag_id IN (select id from tags where name like %?2%))))",nativeQuery = true)
     Page<Post>filterByAuthor(List<Integer>author,String keyword,Pageable pageable);
 
     @Query(value = "select * from posts where id in (select post_id from post_tags where tag_id IN " +
