@@ -1,5 +1,6 @@
 package com.mountblue.springboot.blog.blog.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,10 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class MyConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public UserDetailsService getUserDetailsService() {
@@ -40,9 +45,22 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/newpost/**").hasAnyAuthority("Author", "Admin")
-                .and().formLogin().loginPage("/login")
-                .loginProcessingUrl("/checkingcredential").permitAll().and().logout().permitAll()
-                .and().csrf().disable();
+//        http.authorizeRequests().antMatchers("/newpost/**").hasAnyAuthority("Author", "Admin")
+//                .and().formLogin().loginPage("/login")
+//                .loginProcessingUrl("/checkingcredential").permitAll().and().logout().permitAll()
+//                .and().csrf().disable();
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/newpost/**", "/updatecomment/", "/deletecomment",
+                        "/updatepost/", "/deletepost", "/api/newpost/*","/api/post/*", "/api/comment/*")
+                .hasAnyAuthority("Admin", "Author")
+                .antMatchers("/authenticate").permitAll().and().formLogin().loginPage("/login").
+                loginProcessingUrl("/checkingcredential").permitAll().and().logout().permitAll();
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+    }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
