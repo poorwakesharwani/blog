@@ -1,4 +1,7 @@
 package com.mountblue.springboot.blog.blog.api.rest.repository;
 
-public interface CommentDTORepository {
+import com.mountblue.springboot.blog.blog.model.Comment;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CommentDTORepository extends JpaRepository<Comment, Integer> {
 }

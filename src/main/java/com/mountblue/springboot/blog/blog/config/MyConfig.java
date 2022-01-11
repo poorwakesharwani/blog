@@ -45,10 +45,6 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().antMatchers("/newpost/**").hasAnyAuthority("Author", "Admin")
-//                .and().formLogin().loginPage("/login")
-//                .loginProcessingUrl("/checkingcredential").permitAll().and().logout().permitAll()
-//                .and().csrf().disable();
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/newpost/**", "/updatecomment/", "/deletecomment",
                         "/updatepost/", "/deletepost", "/api/newpost/*","/api/post/*", "/api/comment/*")

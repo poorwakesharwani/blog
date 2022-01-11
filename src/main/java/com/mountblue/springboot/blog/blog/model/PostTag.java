@@ -11,9 +11,9 @@ public class PostTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "post_id",nullable = false)
+    @Column(name = "post_id", nullable = false)
     private int postId;
-    @Column(name = "tag_id",nullable = false)
+    @Column(name = "tag_id", nullable = false)
     private int tagId;
     @Column(name = "created_at")
     private Date createdAt;

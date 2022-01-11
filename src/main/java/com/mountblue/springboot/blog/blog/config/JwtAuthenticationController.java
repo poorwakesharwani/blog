@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-//@CrossOrigin
 public class JwtAuthenticationController {
 
     @Autowired
@@ -34,7 +33,6 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenicationToken(@RequestBody AuthenticationRequest authenticationRequest)
             throws Exception {
-        System.out.println("authenticationRequest = " + authenticationRequest);
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
@@ -46,7 +44,6 @@ public class JwtAuthenticationController {
 
         final UserDetails userDetails =
                 customUserDetailService.loadUserByUsername(authenticationRequest.getUsername());
-        System.out.println("User validate");
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }

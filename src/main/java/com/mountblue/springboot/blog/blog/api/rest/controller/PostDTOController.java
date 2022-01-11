@@ -18,9 +18,9 @@ import java.util.List;
 public class PostDTOController {
 
     @Autowired
-     private PostDTOService postDTOService;
+    private PostDTOService postDTOService;
     @Autowired
-    private  PostService postService;
+    private PostService postService;
     @Autowired
     private PostDTORepository postDTORepository;
 
@@ -30,77 +30,74 @@ public class PostDTOController {
                                       @RequestParam(value = "start", required = false, defaultValue = "1") int start,
                                       @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
                                       @RequestParam(value = "sort", required = false) String sort,
-                                      @RequestParam(value="author", required = false)List<Integer>author,
-                                      @RequestParam(value="tag", required = false)List<String>tags,
-                                      @RequestParam(value="date", required = false)String published,
-                                      @RequestParam(value="keyword", required = false)String keyword){
+                                      @RequestParam(value = "author", required = false) List<Integer> author,
+                                      @RequestParam(value = "tag", required = false) List<String> tags,
+                                      @RequestParam(value = "date", required = false) String published,
+                                      @RequestParam(value = "keyword", required = false) String keyword) {
         if (sort == null) {
             sort = "asc";
         }
         String startDate = "";
         String endDate = "";
         if (published != null) {
-            System.out.println("published==" + published);
             String date[] = published.split(",");
-            System.out.println(date[0] + " " + date[1]);
             startDate = date[0];
             endDate = date[1];
         }
         Pageable pageable = postDTOService.getDTOPage(start, limit, sort);
         if (tags != null && author != null && published != null) {
-            return postDTOService.findByTagAndAuthorAndPublishedAt(author,tags,startDate,endDate,pageable,keyword);
+            return postDTOService.findByTagAndAuthorAndPublishedAt(author, tags, startDate, endDate, pageable, keyword);
 
         } else if (tags != null && author != null) {
-            return postDTOService.findByTagAndAuthor(tags,author,pageable,keyword);
+            return postDTOService.findByTagAndAuthor(tags, author, pageable, keyword);
 
         } else if (tags != null && published != null) {
-            return postDTOService.findByTagAndPublishedAt(tags,startDate,endDate,pageable,keyword);
+            return postDTOService.findByTagAndPublishedAt(tags, startDate, endDate, pageable, keyword);
 
         } else if (author != null && published != null) {
-            return postDTOService.findByAuthorAndPublishedAt(author,startDate,endDate,pageable,keyword);
+            return postDTOService.findByAuthorAndPublishedAt(author, startDate, endDate, pageable, keyword);
 
-        }else if (tags != null) {
-            return postDTOService.findByTag(tags,pageable,keyword);
-        }else if (author != null) {
-            return postDTOService.findByAuthor(author,pageable,keyword);
+        } else if (tags != null) {
+            return postDTOService.findByTag(tags, pageable, keyword);
+        } else if (author != null) {
+            return postDTOService.findByAuthor(author, pageable, keyword);
 
         } else if (published != null) {
-            return postDTOService.findByPublishedAt(startDate,endDate,keyword,pageable);
+            return postDTOService.findByPublishedAt(startDate, endDate, keyword, pageable);
 
         } else if (keyword != null) {
-            return postDTOService.findByKeyword(keyword,pageable);
-        }else{
+            return postDTOService.findByKeyword(keyword, pageable);
+        } else {
             return postDTOService.findAllPost(pageable);
         }
     }
 
     @GetMapping("/post/{id}")
-    public PostDTO findByIdPost(@PathVariable(name="id")int id){
-        System.out.println("post by id");
+    public PostDTO findByIdPost(@PathVariable(name = "id") int id) {
         return postDTOService.findById(id);
     }
 
     @PostMapping("/newpost")
-    public String savePost(@RequestBody PostDTO postDTO){
+    public String savePost(@RequestBody PostDTO postDTO) {
         postDTO.setId(0);
-        if(postDTOService.savePost(postDTO)==null){
+        if (postDTOService.savePost(postDTO) == null) {
             return "Post is not saved";
-        }else {
+        } else {
             return "Post Saved";
         }
     }
 
     @PutMapping("/newpost")
-    public String updatePost(@RequestBody PostDTO postDTO){
-        if(postDTOService.savePost(postDTO)==null){
+    public String updatePost(@RequestBody PostDTO postDTO) {
+        if (postDTOService.savePost(postDTO) == null) {
             return "Post is not updated";
-        }else {
+        } else {
             return "Post is updated";
         }
     }
 
     @DeleteMapping("/post/{postId}")
-    public String deletePost(@PathVariable(name="postId")int postId){
+    public String deletePost(@PathVariable(name = "postId") int postId) {
         return postDTOService.deletePost(postId);
     }
 }

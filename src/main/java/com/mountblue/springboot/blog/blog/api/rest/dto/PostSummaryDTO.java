@@ -19,13 +19,12 @@ public class PostSummaryDTO {
     private UserDTO userDTO;
     private List<TagDTO> tags;
 
-    public PostSummaryDTO(int id, String title,String excerpt, Date publishedAt, int userId,String userName,
+    public PostSummaryDTO(int id, String title, String excerpt, Date publishedAt, int userId, String userName,
                           String userEmail) {
         this.id = id;
-        this.title=title;
+        this.title = title;
         this.excerpt = excerpt;
         this.publishedAt = publishedAt;
-        this.userDTO = new UserDTO(userId,userName,userEmail);
+        this.userDTO = new UserDTO(userId, userName, userEmail);
     }
-
 }

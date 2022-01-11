@@ -19,13 +19,14 @@ public class PostDTO {
     private Date publishedAt;
     private UserDTO author;
     private List<CommentDTO> comments;
-    private List<TagDTO>tags;
-    public PostDTO(int id, String title,String content, Date publishedAt, int userId,String userName,
-                          String userEmail) {
+    private List<TagDTO> tags;
+
+    public PostDTO(int id, String title, String content, Date publishedAt, int userId, String userName,
+                   String userEmail) {
         this.id = id;
-        this.title=title;
+        this.title = title;
         this.content = content;
         this.publishedAt = publishedAt;
-        this.author = new UserDTO(userId,userName,userEmail);
+        this.author = new UserDTO(userId, userName, userEmail);
     }
 }

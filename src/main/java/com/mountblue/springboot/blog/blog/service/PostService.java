@@ -36,7 +36,8 @@ public interface PostService {
 
     Model filterByTag(Model model, List<String> tag, String sort, String keyword, Pageable pageable);
 
-    Model filterByTagAndAuthor(Model model, List<String> tags, List<Integer> author, String sort, String keyword, Pageable pageable);
+    Model filterByTagAndAuthor(Model model, List<String> tags, List<Integer> author, String sort, String keyword,
+                               Pageable pageable);
 
     Model filterByAuthorAndPublished(Model model, List<Integer> author, String startDate, String endDate, String sort,
                                      String keyword, Pageable pageable);

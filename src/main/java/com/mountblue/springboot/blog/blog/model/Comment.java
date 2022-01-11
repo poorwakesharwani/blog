@@ -11,11 +11,11 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "name", length=2000)
+    @Column(name = "name", length = 2000)
     private String name;
-    @Column(name = "email",length=2000)
+    @Column(name = "email", length = 2000)
     private String email;
-    @Column(name = "comment",length=50000)
+    @Column(name = "comment", length = 50000)
     private String commentData;
     @Column(name = "createdAt")
     private Date createdAt;

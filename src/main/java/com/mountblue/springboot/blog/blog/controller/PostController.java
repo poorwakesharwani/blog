@@ -49,9 +49,7 @@ public class PostController {
         String startDate = "";
         String endDate = "";
         if (published != null) {
-            System.out.println("published==" + published);
             String date[] = published.split(",");
-            System.out.println(date[0] + " " + date[1]);
             startDate = date[0];
             endDate = date[1];
         }
@@ -65,7 +63,6 @@ public class PostController {
             model = postService.filterByTagAndPublished(model, tags, startDate, endDate, sort, keyword, pageable);
             return "dashboard";
         } else if (author != null && published != null) {
-            System.out.println("author and published");
             model = postService.filterByAuthorAndPublished(model, author, startDate, endDate, sort, keyword, pageable);
             return "dashboard";
         } else if (tags != null) {
@@ -97,7 +94,6 @@ public class PostController {
     @GetMapping("/post/{id}")
     public String readMore(@PathVariable(name = "id") int id, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth.getName()+"name=======");
         if (auth != null) {
             Users currentUser = usersRepository.findByEmail(auth.getName());
             model.addAttribute("currentUser", currentUser);
@@ -127,7 +123,7 @@ public class PostController {
         }
         model.addAttribute("tags", tags.substring(1, tags.length()));
         model.addAttribute("post", post);
-        return "/new-post";//change the name
+        return "/new-post";
     }
 
     @GetMapping("/deletepost/{id}")
@@ -144,7 +140,6 @@ public class PostController {
     @PostMapping("/publish")
     public String publishPost(@ModelAttribute("post") Post post, @RequestParam("tag") String tag, Model model,
                               @RequestParam(value = "authorName", required = false) String id) {
-        System.out.println("author id== " + id);
         model = postService.savePost(post, tag, model, id);
         return "redirect:/";
     }

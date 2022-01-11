@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class PostDTOServiceImpl implements PostDTOService{
+public class PostDTOServiceImpl implements PostDTOService {
 
     @Autowired
     private PostDTORepository postDTORepository;
@@ -44,16 +44,16 @@ public class PostDTOServiceImpl implements PostDTOService{
 
     @Override
     public Page<PostSummaryDTO> findAllPost(Pageable pageable) {
-        Page<PostSummaryDTO>postSummaryDTOS=postDTORepository.findAllPostDTO(pageable);
-        for (PostSummaryDTO pageSummaryDTO:postSummaryDTOS) {
-            List<Tag> tags=postDTORepository.findAllTags(pageSummaryDTO.getId());
-            List<TagDTO> tagsName=new ArrayList<>();
-            for(Tag tag:tags){
-                TagDTO tagDTO=new TagDTO();
+        Page<PostSummaryDTO> postSummaryDTOS = postDTORepository.findAllPostDTO(pageable);
+        for (PostSummaryDTO pageSummaryDTO : postSummaryDTOS) {
+            List<Tag> tags = postDTORepository.findAllTags(pageSummaryDTO.getId());
+            List<TagDTO> tagsName = new ArrayList<>();
+            for (Tag tag : tags) {
+                TagDTO tagDTO = new TagDTO();
                 tagDTO.setName(tag.getName());
                 tagsName.add(tagDTO);
             }
-           pageSummaryDTO.setTags(tagsName);
+            pageSummaryDTO.setTags(tagsName);
         }
         return postSummaryDTOS;
     }
@@ -69,11 +69,11 @@ public class PostDTOServiceImpl implements PostDTOService{
 
     @Override
     public PostDTO findById(int id) {
-        PostDTO postDTO=postDTORepository.findByIdPost(id);
-        List<Tag> tags=postDTORepository.findAllTags(id);
-        List<TagDTO> tagsName=new ArrayList<>();
-        for(Tag tag:tags){
-            TagDTO tagDTO=new TagDTO();
+        PostDTO postDTO = postDTORepository.findByIdPost(id);
+        List<Tag> tags = postDTORepository.findAllTags(id);
+        List<TagDTO> tagsName = new ArrayList<>();
+        for (Tag tag : tags) {
+            TagDTO tagDTO = new TagDTO();
             tagDTO.setName(tag.getName());
             tagsName.add(tagDTO);
         }
@@ -84,27 +84,27 @@ public class PostDTOServiceImpl implements PostDTOService{
 
     @Override
     public Post savePost(PostDTO postDTO) {
-        Post post=new Post();
-        if(postDTO.getId()!=0){
-            Post oldPost=postService.getById(postDTO.getId());
+        Post post = new Post();
+        if (postDTO.getId() != 0) {
+            Post oldPost = postService.getById(postDTO.getId());
             post.setCreatedAt(oldPost.getCreatedAt());
             post.setUpdatedAt(new Date());
-        }else{
+        } else {
             post.setCreatedAt(new Date());
             post.setUpdatedAt(new Date());
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
-            if(auth.getAuthorities().toString().contains("Admin")){
-                Users user=null;
-                if(postDTO.getAuthor().getEmail()==null){
+            if (auth.getAuthorities().toString().contains("Admin")) {
+                Users user = null;
+                if (postDTO.getAuthor().getEmail() == null) {
                     user = usersService.findByEmail(auth.getName());
-                }else{
+                } else {
                     user = usersService.findByEmail(postDTO.getAuthor().getEmail());
                 }
                 post.setUser(user);
-            }else if(auth.getAuthorities().toString().contains("Author")){
-                Users user=usersService.findByEmail(auth.getName());
+            } else if (auth.getAuthorities().toString().contains("Author")) {
+                Users user = usersService.findByEmail(auth.getName());
                 post.setUser(user);
             }
         }
@@ -141,34 +141,34 @@ public class PostDTOServiceImpl implements PostDTOService{
     @Override
     public String deletePost(int id) {
         Post post = postService.findById(id);
-        if(post == null){
-            throw  new RuntimeException("Post id not found-"+id);
+        if (post == null) {
+            throw new RuntimeException("Post id not found-" + id);
         }
         postService.deletedById(id);
-        return "Deleted employee id - "+id;
+        return "Deleted employee id - " + id;
     }
 
     @Override
-    public Page findByKeyword(String keyword,Pageable pageable) {
-        return postDTORepository.findByKeyword(keyword,pageable);
+    public Page findByKeyword(String keyword, Pageable pageable) {
+        return postDTORepository.findByKeyword(keyword, pageable);
     }
 
     @Override
-    public Page findByAuthor(List<Integer> author, Pageable pageable,String keyword) {
-        if(keyword==null){
-            keyword="";
+    public Page findByAuthor(List<Integer> author, Pageable pageable, String keyword) {
+        if (keyword == null) {
+            keyword = "";
         }
-        return postDTORepository.filterByAuthor(author,keyword,pageable);
+        return postDTORepository.filterByAuthor(author, keyword, pageable);
     }
 
     @Override
-    public Page findByPublishedAt(String startDate , String endDate,String keyword, Pageable pageable) {
-        if(keyword==null){
-            keyword="";
+    public Page findByPublishedAt(String startDate, String endDate, String keyword, Pageable pageable) {
+        if (keyword == null) {
+            keyword = "";
         }
         SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
-        if(keyword==null){
-            keyword="";
+        if (keyword == null) {
+            keyword = "";
         }
         Date start = null;
         Date end = null;
@@ -178,30 +178,30 @@ public class PostDTOServiceImpl implements PostDTOService{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return postDTORepository.filterByPublishedAt(start,end,keyword,pageable);
+        return postDTORepository.filterByPublishedAt(start, end, keyword, pageable);
     }
 
     @Override
-    public Page findByTag(List<String> tag, Pageable pageable,String keyword) {
-        if(keyword==null){
-            keyword="";
+    public Page findByTag(List<String> tag, Pageable pageable, String keyword) {
+        if (keyword == null) {
+            keyword = "";
         }
-        return postDTORepository.filterByTag(tag,keyword,pageable);
+        return postDTORepository.filterByTag(tag, keyword, pageable);
     }
 
     @Override
-    public Page findByTagAndAuthor(List<String> tag, List<Integer> author, Pageable pageable,String keyword) {
-        if(keyword==null){
-            keyword="";
+    public Page findByTagAndAuthor(List<String> tag, List<Integer> author, Pageable pageable, String keyword) {
+        if (keyword == null) {
+            keyword = "";
         }
-        return postDTORepository.filterByTagAndAuthor(tag,author,keyword,pageable);
+        return postDTORepository.filterByTagAndAuthor(tag, author, keyword, pageable);
     }
 
     @Override
     public Page findByTagAndPublishedAt(List<String> tag, String startDate, String endDate, Pageable pageable,
                                         String keyword) {
-        if(keyword==null){
-            keyword="";
+        if (keyword == null) {
+            keyword = "";
         }
         SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
@@ -212,14 +212,14 @@ public class PostDTOServiceImpl implements PostDTOService{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return postDTORepository.filterByTagAndPublished(tag,start,end,keyword,pageable);
+        return postDTORepository.filterByTagAndPublished(tag, start, end, keyword, pageable);
     }
 
     @Override
     public Page findByAuthorAndPublishedAt(List<Integer> author, String startDate, String endDate, Pageable pageable,
                                            String keyword) {
-        if(keyword==null){
-            keyword="";
+        if (keyword == null) {
+            keyword = "";
         }
         SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
@@ -230,14 +230,14 @@ public class PostDTOServiceImpl implements PostDTOService{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return postDTORepository.filterByAuthorAndPublished(author,start,end,keyword,pageable);
+        return postDTORepository.filterByAuthorAndPublished(author, start, end, keyword, pageable);
     }
 
     @Override
     public Page findByTagAndAuthorAndPublishedAt(List<Integer> author, List<String> tag, String startDate,
-                                                 String endDate, Pageable pageable,String keyword) {
-        if(keyword==null){
-            keyword="";
+                                                 String endDate, Pageable pageable, String keyword) {
+        if (keyword == null) {
+            keyword = "";
         }
         SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
@@ -248,6 +248,6 @@ public class PostDTOServiceImpl implements PostDTOService{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return postDTORepository.filterByTagAndAuthorAndPublished(tag,author,start,end,keyword,pageable);
+        return postDTORepository.filterByTagAndAuthorAndPublished(tag, author, start, end, keyword, pageable);
     }
 }

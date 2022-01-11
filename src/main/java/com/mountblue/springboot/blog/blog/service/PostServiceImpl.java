@@ -65,7 +65,6 @@ public class PostServiceImpl implements PostService {
 
     private Model findAllTags(Map<Post, String> postIdVsTags, Model model, Page<Post> posts) {
         for (Post post : posts) {
-            System.out.println("id=" + post.getId());
             List<PostTag> postTags = postTagService.findByPostId(post.getId());
             String tags = "";
             for (PostTag postTag : postTags) {
@@ -84,7 +83,6 @@ public class PostServiceImpl implements PostService {
     }
 
     public Model search(Model model, String keyword, String sort, Pageable pageable) {
-        System.out.println("search and sorting service " + keyword + " sort  " + sort);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
         Page<Post> posts = postRepository.findSearchResult(keyword, pageable);
         return findAllTags(postIdVsTags, model, posts);
@@ -101,7 +99,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Model dashboard(Model model, Pageable pageable) {
-        System.out.println("PostServiceImpl.dashboard start");
         Page<Post> posts = postRepository.findAll(pageable);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
         return findAllTags(postIdVsTags, model, posts);
@@ -109,12 +106,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Model filterByPublishedAt(Model model, String startDate, String endDate, String sort, Pageable pageable) {
-        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
         Date end = null;
         try {
-            start = formatter2.parse(startDate);
-            end = formatter2.parse(endDate);
+            start = format.parse(startDate);
+            end = format.parse(endDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,7 +122,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Model filterByAuthor(Model model, List<Integer> author, String sort, String keyword, Pageable pageable) {
-        System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
         }
@@ -137,7 +133,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByTag(Model model, List<String> tag, String sort, String keyword
             , Pageable pageable) {
-        System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
         }
@@ -149,8 +144,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByTagAndAuthor(Model model, List<String> tags, List<Integer> author, String sort,
                                       String keyword, Pageable pageable) {
-
-        System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
         }
@@ -165,12 +158,12 @@ public class PostServiceImpl implements PostService {
         if (keyword == null) {
             keyword = "";
         }
-        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
         Date end = null;
         try {
-            start = formatter2.parse(startDate);
-            end = formatter2.parse(endDate);
+            start = format.parse(startDate);
+            end = format.parse(endDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -185,12 +178,12 @@ public class PostServiceImpl implements PostService {
         if (keyword == null) {
             keyword = "";
         }
-        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
         Date end = null;
         try {
-            start = formatter2.parse(startDate);
-            end = formatter2.parse(endDate);
+            start = format.parse(startDate);
+            end = format.parse(endDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,12 +198,12 @@ public class PostServiceImpl implements PostService {
         if (keyword == null) {
             keyword = "";
         }
-        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
         Date end = null;
         try {
-            start = formatter2.parse(startDate);
-            end = formatter2.parse(endDate);
+            start = format.parse(startDate);
+            end = format.parse(endDate);
         } catch (Exception e) {
             e.printStackTrace();
         }

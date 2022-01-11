@@ -5,6 +5,7 @@ import com.mountblue.springboot.blog.blog.model.Comment;
 
 public interface CommentDTOService {
 
-    Comment saveComment(CommentDTO commentDTO,int postId);
-    String deleteComment(CommentDTO commentDTO,int postId);
+    Comment saveComment(CommentDTO commentDTO, int postId);
+
+    String deleteComment(CommentDTO commentDTO, int postId);
 }
