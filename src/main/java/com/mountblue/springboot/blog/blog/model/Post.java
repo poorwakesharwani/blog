@@ -13,11 +13,11 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "title")
+    @Column(name = "title",length=2000,nullable = false)
     private String title;
-    @Column(name = "excerpt")
+    @Column(name = "excerpt",length=100000)
     private String excerpt;
-    @Column(name = "content")
+    @Column(name = "content",length=1000000,nullable = false)
     private String content;
     @Column(name = "published_at")
     private Date publishedAt;

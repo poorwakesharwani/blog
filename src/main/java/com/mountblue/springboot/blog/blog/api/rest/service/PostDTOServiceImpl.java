@@ -1,6 +1,6 @@
 package com.mountblue.springboot.blog.blog.api.rest.service;
 
-import com.mountblue.springboot.blog.blog.api.rest.dto.CommentDTO;
+
 import com.mountblue.springboot.blog.blog.api.rest.dto.PostDTO;
 import com.mountblue.springboot.blog.blog.api.rest.dto.PostSummaryDTO;
 import com.mountblue.springboot.blog.blog.api.rest.dto.TagDTO;
@@ -18,8 +18,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,14 +93,27 @@ public class PostDTOServiceImpl implements PostDTOService{
             post.setCreatedAt(new Date());
             post.setUpdatedAt(new Date());
         }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            if(auth.getAuthorities().toString().contains("Admin")){
+                Users user=null;
+                if(postDTO.getAuthor().getEmail()==null){
+                    user = usersService.findByEmail(auth.getName());
+                }else{
+                    user = usersService.findByEmail(postDTO.getAuthor().getEmail());
+                }
+                post.setUser(user);
+            }else if(auth.getAuthorities().toString().contains("Author")){
+                Users user=usersService.findByEmail(auth.getName());
+                post.setUser(user);
+            }
+        }
         post.setId(postDTO.getId());
         post.setContent(postDTO.getContent().trim());
         post.setPublishedAt(new Date());
         post.setPublished(true);
         post.setExcerpt(post.getContent().trim().substring(0, post.getContent().length() / 4));
         post.setTitle(postDTO.getTitle());
-        Users user=usersService.getById(postDTO.getAuthor().getId());
-        post.setUser(user);
         post = postService.save(post);
         for (int i = 0; i < postDTO.getTags().size(); i++) {
             Tag tagPost = tagService.findByName(postDTO.getTags().get(i).getName().trim());

@@ -74,6 +74,11 @@ public class PostServiceImpl implements PostService {
             postIdVsTags.put(post, tags.substring(1, tags.length()));
         }
         model.addAttribute("postIdVsTags", postIdVsTags);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            Users currentUser = usersRepository.findByEmail(auth.getName());
+            model.addAttribute("currentUser", currentUser);
+        }
         model = allModelData(model);
         return model;
     }
@@ -99,11 +104,6 @@ public class PostServiceImpl implements PostService {
         System.out.println("PostServiceImpl.dashboard start");
         Page<Post> posts = postRepository.findAll(pageable);
         Map<Post, String> postIdVsTags = new LinkedHashMap<>();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            Users currentUser = usersRepository.findByEmail(auth.getName());
-            model.addAttribute("currentUser", currentUser);
-        }
         return findAllTags(postIdVsTags, model, posts);
     }
 
@@ -162,7 +162,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Model filterByAuthorAndPublished(Model model, List<Integer> author, String startDate, String endDate,
                                             String sort, String keyword, Pageable pageable) {
-        System.out.println("filter by author");
         if (keyword == null) {
             keyword = "";
         }
